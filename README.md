@@ -19,7 +19,7 @@ Join the [HyperDBiscord](https://discord.gg/8YQzexAA)
 Install the package from PyPI:
 
 ```bash
-pip install hyperdb-python
+pip install -e git+git://github.com/SirQuackyy/hyperDB.git@master#egg=hyperdb-python
 ```
 
 ## Usage
