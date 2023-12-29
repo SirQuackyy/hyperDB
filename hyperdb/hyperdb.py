@@ -4,6 +4,8 @@ import pickle
 import numpy as np
 import openai
 
+from sentence_transformers import SentenceTransformer
+
 from hyperdb.galaxy_brain_math_shit import (
     dot_product,
     adams_similarity,
@@ -15,6 +17,7 @@ from hyperdb.galaxy_brain_math_shit import (
 
 MAX_BATCH_SIZE = 2048  # OpenAI batch endpoint max size https://github.com/openai/openai-python/blob/main/openai/embeddings_utils.py#L43
 
+EMBEDDING_MODEL = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2', device='cpu')
 
 def get_embedding(documents, key=None, model="text-embedding-ada-002"):
     """Default embedding function that uses OpenAI Embeddings."""
@@ -36,13 +39,8 @@ def get_embedding(documents, key=None, model="text-embedding-ada-002"):
                     texts.append(text)
         elif isinstance(documents[0], str):
             texts = documents
-    batches = [
-        texts[i : i + MAX_BATCH_SIZE] for i in range(0, len(texts), MAX_BATCH_SIZE)
-    ]
-    embeddings = []
-    for batch in batches:
-        response = openai.Embedding.create(input=batch, model=model)
-        embeddings.extend(np.array(item["embedding"]) for item in response["data"])
+    
+    embeddings = EMBEDDING_MODEL.encode(texts)
     return embeddings
 
 
